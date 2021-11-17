@@ -17,8 +17,9 @@ export class PlanInterpreter {
   }
 
   public interpret(plan: PlanSource): InterpretedScenario[] {
-    var topLevelInterpretations = this.interpretations.filter(
-      (p) => p.parameters == null
+    // top level interpretations are those which do not have bound variables
+    var topLevelInterpretations = this.interpretations.filter((p) =>
+      p.views.some((v) => v.start.every((s) => s.bound.length == 0))
     );
     var scenarios: InterpretedScenario[] = [];
 

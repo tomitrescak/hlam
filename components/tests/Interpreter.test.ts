@@ -84,64 +84,19 @@ it("loads interpretation", function () {
 
   expect(ip).toHaveLength(1);
 
-  console.log(ip[0].scenarios.map((s) => s.getText()));
-
+  // three different packages
   expect(ip[0].scenarios).toHaveLength(3);
 
-  expect(ip).toEqual([
-    {
-      scenarios: [
-        {
-          scenarios: [
-            {
-              scenarios: [],
-              lines: [
-                {
-                  time: 0,
-                  parameters: ["obj1", "trub", "b1"],
-                  action: "load-truck",
-                  cost: 2,
-                },
-              ],
-              text: "Truck delivery from b1 to ad",
-            },
-            {
-              scenarios: [],
-              lines: [
-                {
-                  time: 15,
-                  parameters: ["obj1", "a380", "ad"],
-                  action: "unload-airplane",
-                  cost: 1,
-                },
-              ],
-              text: "Plane delivery from b1 to ad",
-            },
-          ],
-          lines: [],
-          text: "Package delivery 'obj1' from 'b1' to 'ad'",
-        },
-      ],
-      lines: [],
-      text: "Package Tracking",
-    },
-    {
-      scenarios: [
-        {
-          scenarios: [],
-          lines: [
-            {
-              time: 0,
-              parameters: ["obj1", "trub", "b1"],
-              action: "load-truck",
-              cost: 2,
-            },
-          ],
-          text: "",
-        },
-      ],
-      lines: [],
-      text: "Airport Traffic",
-    },
-  ]);
+  // first package is loaded on the truck and then on the plane
+  let first = ip[0].scenarios[0];
+
+  expect(first.scenarios).toHaveLength(2);
+  expect(first.scenarios[0].text).toBe("Truck delivery from b1 to ab");
+  expect(first.scenarios[0].lines).toHaveLength(4);
+  expect(first.scenarios[0].lines[0].text).toBe("load-truck obj1 trub b1");
+  expect(first.scenarios[0].lines[1].text).toBe("drive-truck trub b1 b2 b");
+  expect(first.scenarios[0].lines[2].text).toBe("drive-truck trub b2 ab b");
+  expect(first.scenarios[0].lines[3].text).toBe("unload-truck obj1 trub ab");
+
+  expect(first.scenarios[1].text).toBe("Plane delivery from ab to ad");
 });

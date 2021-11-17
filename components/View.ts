@@ -2,18 +2,28 @@ import { Binding } from "./Binding";
 import { GoalStrategy } from "./Enums";
 import { PlanAction } from "./PlanAction";
 
+type StrategyDAO = {
+  type: "final" | "first";
+  filter: string[] | undefined;
+};
+
 export type ViewDAO = {
   start: string[];
   goal: string[];
-  goalStrategy: "final" | "first";
+  goalStrategy: StrategyDAO;
   view: string | null;
   // boundVariables: string[];
+};
+
+type Strategy = {
+  type: GoalStrategy;
+  filter?: string[] | undefined;
 };
 
 export class View {
   public start: PlanAction[];
   public goals: PlanAction[] | null;
-  public goalStrategy: GoalStrategy;
+  public goalStrategy: Strategy;
   public view: PlanAction | null;
   // public boundVariables: string[];
 
@@ -40,11 +50,19 @@ export class View {
 
     this.view = definition.view ? new PlanAction(definition.view) : null;
 
-    var strategyString = definition.goalStrategy
-      ? definition.goalStrategy
-      : null;
-    this.goalStrategy =
-      strategyString === "final" ? GoalStrategy.Final : GoalStrategy.First;
+    if (definition.goalStrategy) {
+      this.goalStrategy = {
+        type:
+          definition.goalStrategy.type === "final"
+            ? GoalStrategy.Final
+            : GoalStrategy.First,
+        filter: definition.goalStrategy.filter,
+      };
+    } else {
+      this.goalStrategy = {
+        type: GoalStrategy.First,
+      };
+    }
 
     // this.boundVariables = definition.bind
     //         ? definition.bind
@@ -54,9 +72,22 @@ export class View {
   public isBound(binding: Binding[]) {
     return (
       this.finishedBindings.length > 0 &&
-      this.finishedBindings.some((b) =>
-        b.every((bi, i) => bi.value === binding[i].value)
-      )
+      this.finishedBindings.some((b) => {
+        // filter bindings
+        let myFilteredBindings = this.goalStrategy.filter
+          ? b.filter(
+              (bi) => this.goalStrategy.filter!.indexOf(bi.variable) >= 0
+            )
+          : b;
+
+        return myFilteredBindings.every((bi) => {
+          let myValue = bi.value;
+          let theirValue = binding.find(
+            (bb) => bb.variable === bi.variable
+          )?.value;
+          return myValue === theirValue;
+        });
+      })
     );
   }
 }

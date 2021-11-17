@@ -2,45 +2,42 @@
   "views": [
     {
       "id": "truck-transport-from-to",
-      "parameters": ["packageId", "truckId", "from", "to"],
-      "description": "Truck delivery from !from to !to",
+      "description": "Truck delivery from !truckFrom to !truckTo",
       "plan": {
         "sequence": [
-          "load-truck !packageId !truckId !from",
-          "drive-Truck !truckId !from !to city",
-          "unload-truck !packageId !truckId !to"
+          "load-truck !packageId !truckId !truckFrom",
+          "drive-truck !truckId from to city",
+          "unload-truck !packageId !truckId !truckTo"
         ]
       }
     },
     {
       "id": "plane-transport-from-to",
-      "description": "Plane delivery from !from to !to",
-      "parameters": ["packageId", "from", "to", "planeId"],
+      "description": "Plane delivery from !planeFrom to !planeTo",
       "plan": {
         "sequence": [
-          "load-airplane !packageId !planeId !from",
-          "fly-airplane !planeId !from !to",
-          "unload-airplane !packageId !planeId !to"
+          "load-airplane !packageId !planeId !planeFrom",
+          "fly-airplane !planeId planeFrom planeTo",
+          "unload-airplane !packageId !planeId !planeTo"
         ]
       }
     },
     {
       "id": "package-delivery-from-to",
-      "parameters": ["packageId", "from", "to"],
       "description": "Package delivery '!packageId' from '!from' to '!to'",
       "views": [
         {
           "bind": ["truckId"],
           "start": "load-truck !packageId ?truckId ?truckFrom",
           "goal": "unload-truck !packageId ?truckId ?truckTo",
-          "goalStrategy": "first",
+          "goalStrategy": { "type": "first" },
           "view": "truck-transport-from-to !packageId ?truckId ?truckFrom ?truckTo"
         },
         {
           "bind": ["planeId"],
           "start": "load-airplane !packageId ?planeId ?planeFrom",
           "goal": "unload-airplane !packageId ?planeId ?planeTo",
-          "goalStrategy": "first",
+          "goalStrategy": { "type": "first" },
           "view": "plane-transport-from-to !packageId ?planeId ?planeFrom !planeTo"
         }
       ]
@@ -50,7 +47,6 @@
       "description": "Package Tracking",
       "views": [
         {
-          "bind": ["packageId", "from", "to"],
           "start": [
             "load-truck ?packageId truckId ?from",
             "load-airplane ?packageId planeId ?from"
@@ -61,7 +57,7 @@
           ],
           "goalStrategy": {
             "type": "final",
-            "filterBinding": ["packageId"]
+            "filter": ["packageId"]
           },
           "view": "package-delivery-from-to ?packageId ?from ?to"
         }

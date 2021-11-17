@@ -32,6 +32,10 @@ export class PlanLine {
     this.cost = parseFloat(parts[1].substring(0, parts[1].length - 1));
   }
 
+  public get text() {
+    return `${this.action} ${this.parameters.join(" ")}`;
+  }
+
   static empty: Binding[] = [];
 
   public matchesLines(

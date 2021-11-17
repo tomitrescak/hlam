@@ -7,8 +7,8 @@ import { View } from "./View";
 
 export class InterpretedScenario {
   // private Scenario scenario;
-  private text: string;
-  private lines: PlanLine[];
+  public text: string;
+  public lines: PlanLine[];
 
   public scenarios: InterpretedScenario[];
 
@@ -101,7 +101,7 @@ export class InterpretedScenario {
         }
 
         // we mark this as finished so no more processing is done on this view
-        if (view.goalStrategy === GoalStrategy.Final) {
+        if (view.goalStrategy.type === GoalStrategy.Final) {
           view.finishedBindings.push(startBind);
         }
       }
@@ -171,7 +171,7 @@ export class InterpretedScenario {
           goalLineStart = j + 1;
         }
 
-        if (view.goalStrategy === GoalStrategy.First) {
+        if (view.goalStrategy.type === GoalStrategy.First) {
           break;
         }
       }

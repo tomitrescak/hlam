@@ -1,7 +1,7 @@
 import { PlanAction } from "./PlanAction";
 import { ItemStructure } from "./Enums";
 
-interface ItemDAO {
+export interface ItemDAO {
   anyOf: ItemDAO[] | undefined;
   allOf: ItemDAO[] | undefined;
   oneOf: ItemDAO[] | undefined;

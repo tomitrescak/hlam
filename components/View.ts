@@ -30,14 +30,14 @@ export class View {
   public finishedBindings: Binding[][] = [];
 
   public constructor(definition: ViewDAO) {
-    var start = definition.start;
+    let start = definition.start;
     if (typeof start === "string") {
       this.start = [new PlanAction(start)];
     } else {
       this.start = start.map((a) => new PlanAction(a));
     }
 
-    var goal = definition.goal;
+    let goal = definition.goal;
     if (goal != null) {
       if (typeof goal == "string") {
         this.goals = [new PlanAction(goal)];

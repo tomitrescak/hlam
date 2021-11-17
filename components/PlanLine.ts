@@ -2,7 +2,7 @@ import { Binding } from "./Binding";
 import { PlanAction } from "./PlanAction";
 
 function getIndexOf(strings: string[], item: string): number {
-  for (var i = 0; i < strings.length; i++) {
+  for (let i = 0; i < strings.length; i++) {
     if (item === strings[i]) return i;
   }
   return -1;
@@ -15,16 +15,16 @@ export class PlanLine {
   public cost: number;
 
   public constructor(line: string) {
-    var parts = line.split(":");
+    let parts = line.split(":");
 
     this.time = parseFloat(parts[0]);
     parts = parts[1].split("[");
 
-    var bodyString = parts[0];
+    let bodyString = parts[0];
     bodyString = bodyString.replace("(", "");
     bodyString = bodyString.replace(")", "");
 
-    var body = bodyString.split(" ").filter((s) => s.length > 0);
+    let body = bodyString.split(" ").filter((s) => s.length > 0);
     this.parameters = body.slice(1).map((b) => b.trim());
     this.action = body[0].trim();
 
@@ -45,8 +45,8 @@ export class PlanLine {
     if (lines == null) {
       return null;
     }
-    for (var line of lines) {
-      var match = this.matchesLine(line, bindings);
+    for (let line of lines) {
+      let match = this.matchesLine(line, bindings);
       if (match != null) {
         return match;
       }
@@ -66,33 +66,33 @@ export class PlanLine {
     }
 
     // check all bound variables
-    for (var i = 0; i < line.bound.length; i++) {
-      var b = line.bound[i];
+    for (let i = 0; i < line.bound.length; i++) {
+      let b = line.bound[i];
 
-      var binding = bindings.filter((bi) => bi.variable == b)[0];
+      let binding = bindings.filter((bi) => bi.variable == b)[0];
       if (binding == null) {
         throw new Error(
           "Expected bound variable " + b + " does not exist in bindings"
         );
       }
 
-      var index = getIndexOf(line.parameters, b);
+      let index = getIndexOf(line.parameters, b);
       if (this.parameters[index] != binding.value) {
         return null;
       }
     }
 
     // add new bindings
-    var newBindings: Binding[] = [];
-    for (var b of line.bind) {
-      var index = getIndexOf(line.parameters, b);
+    let newBindings: Binding[] = [];
+    for (let b of line.bind) {
+      let index = getIndexOf(line.parameters, b);
       newBindings.push(new Binding(b, this.parameters[index]));
     }
 
     // add existing bindings
     // browse the new bindings and only add it if does not exist previously
-    for (var binding of bindings) {
-      var exists = newBindings.some((s) => s.variable === binding.variable);
+    for (let binding of bindings) {
+      let exists = newBindings.some((s) => s.variable === binding.variable);
       if (!exists) {
         newBindings.push(new Binding(binding.variable, binding.value));
       }

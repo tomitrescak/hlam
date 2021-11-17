@@ -5,7 +5,7 @@ export class PlanAction {
   public bind: string[];
 
   public constructor(stringRecord: string) {
-    var parts = stringRecord.split(" ");
+    let parts = stringRecord.split(" ");
     this.name = parts[0];
     this.parameters = parts
       .slice(1)

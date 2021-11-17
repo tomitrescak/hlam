@@ -26,7 +26,7 @@ export class Item {
 
     this.action = null;
 
-    var json = record;
+    let json = record;
 
     this.type = json.sequence
       ? ItemStructure.Sequence
@@ -36,7 +36,7 @@ export class Item {
       ? ItemStructure.AllOf
       : ItemStructure.OneOf;
 
-    var items =
+    let items =
       this.type == ItemStructure.Sequence
         ? json.sequence
         : this.type == ItemStructure.AnyOf
@@ -48,7 +48,7 @@ export class Item {
     this.items = [];
 
     if (items != null) {
-      for (var i = 0; i < items!.length; i++) {
+      for (let i = 0; i < items!.length; i++) {
         this.items[i] = new Item(items[i]);
       }
     }

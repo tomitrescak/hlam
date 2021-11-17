@@ -11,19 +11,19 @@ export class PlanInterpreter {
   public interpretations: Scenario[];
 
   public constructor(inter: InterpretationDAO) {
-    var def = inter.views;
+    let def = inter.views;
 
     this.interpretations = def.map((i) => new Scenario(i));
   }
 
   public interpret(plan: PlanSource): InterpretedScenario[] {
     // top level interpretations are those which do not have bound variables
-    var topLevelInterpretations = this.interpretations.filter((p) =>
+    let topLevelInterpretations = this.interpretations.filter((p) =>
       p.views.some((v) => v.start.every((s) => s.bound.length == 0))
     );
-    var scenarios: InterpretedScenario[] = [];
+    let scenarios: InterpretedScenario[] = [];
 
-    for (var i of topLevelInterpretations) {
+    for (let i of topLevelInterpretations) {
       scenarios.push(this.interpretScenario(plan.lines, i));
     }
     return scenarios;

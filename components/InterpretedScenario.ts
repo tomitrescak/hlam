@@ -21,17 +21,21 @@ export class InterpretedScenario {
     this.scenarios = [];
     this.lines = [];
 
+    console.group("SCENARIO: " + scenario.id.name);
+
     // create the text
     this.text = scenario.description;
     if (this.text != null) {
-      for (var b of bindings) {
+      for (let b of bindings) {
         this.text = this.text.replace("!" + b.variable, b.value);
       }
     }
 
     // process the views
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i];
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+
+      console.log(`LINE ${i}: ` + line.text);
 
       ////////////////////////////////////////////////////
       // if this is a final plan view, add all matching plan lines
@@ -45,67 +49,81 @@ export class InterpretedScenario {
       // process view find all plan subsets in all views
       ////////////////////////////////////////////////////
 
-      for (var s = 0; s < scenario.views.length; s++) {
-        var view = scenario.views[s];
-        var startBind = this.checkStartMatch(view, line, bindings);
+      let views = [...scenario.views];
+
+      for (let s = 0; s < views.length; s++) {
+        let view = views[s];
+        let startBind = this.checkStartMatch(view, line, bindings);
+
+        console.log(`Scenario: ${s} / ${views.length}`);
 
         // we did not find the starting line
         if (startBind == null) {
-          continue;
+          console.log("FAIL: No BIND");
         }
 
-        // we may have finished processing the plan
-        if (view.isBound(startBind)) {
-          continue;
-        }
+        if (startBind != null) {
+          // we may have finished processing the plan
 
-        // if we found a startLine we find the finish
-
-        var lineSet: PlanLine[] = [];
-        var goalBind: Binding[] | null = null;
-
-        // we mark that we are taking everything from this line forward  in the list of lines from start to goal
-        var goalLineStart = i;
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////
-        // !IMPORTANT - If we have no goal, we take only the first line and continue execution
-        //            - Otherwise we wil try to find the final goal
-        ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-        if (view.goals == null) {
-          // we check that the existing binding from start as goal does not exist
-          goalBind = startBind.map((b) => b.clone());
-
-          // we only add one line and that is a start line, since we have no goal
-          lineSet.push(lines[i]);
-        } else {
-          // copy all lines from start to goal to the output and create a new view from it
-          goalBind = this.findLinesTillGoal(
-            lines,
-            i,
-            view,
-            startBind,
-            lineSet,
-            goalLineStart
-          );
-        }
-
-        // if we found a goal, we can now
-
-        if (view.view != null) {
-          if (goalBind != null) {
-            this.expandScenario(interpreter, view, lineSet, goalBind);
-          } else {
-            throw new Error("Could not find the goal state");
+          let isBound = view.isBound(startBind);
+          if (isBound) {
+            console.log("FAIL: Already BOUND");
           }
-        }
 
-        // we mark this as finished so no more processing is done on this view
-        if (view.goalStrategy.type === GoalStrategy.Final) {
-          view.finishedBindings.push(startBind);
+          if (!isBound) {
+            console.log("MATCH");
+
+            // if we found a startLine we find the finish
+
+            let lineSet: PlanLine[] = [];
+            let goalBind: Binding[] | null = null;
+
+            // we mark that we are taking everything from this line forward  in the list of lines from start to goal
+            let goalLineStart = i;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////
+            // !IMPORTANT - If we have no goal, we take only the first line and continue execution
+            //            - Otherwise we wil try to find the final goal
+            ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+            if (view.goals == null) {
+              // we check that the existing binding from start as goal does not exist
+              goalBind = startBind.map((b) => b.clone());
+
+              // we only add one line and that is a start line, since we have no goal
+              lineSet.push(lines[i]);
+            } else {
+              // copy all lines from start to goal to the output and create a new view from it
+              goalBind = this.findLinesTillGoal(
+                lines,
+                i,
+                view,
+                startBind,
+                lineSet,
+                goalLineStart
+              );
+            }
+
+            // if we found a goal, we can now
+
+            if (view.view != null) {
+              if (goalBind != null) {
+                this.expandScenario(interpreter, view, lineSet, goalBind);
+              } else {
+                throw new Error("Could not find the goal state");
+              }
+            }
+
+            // we mark this as finished so no more processing is done on this view
+            if (view.goalStrategy.type === GoalStrategy.Final) {
+              view.finishedBindings.push(startBind);
+            }
+          }
         }
       }
     }
+
+    console.groupEnd();
   }
 
   private checkAddPlanLine(
@@ -133,7 +151,7 @@ export class InterpretedScenario {
     line: PlanLine,
     bindings: Binding[]
   ): Binding[] | null {
-    var startBind: Binding[] | null = null;
+    let startBind: Binding[] | null = null;
 
     // find a starting line
     for (let start of view.start) {
@@ -166,7 +184,7 @@ export class InterpretedScenario {
         goalBind = matchedGoal;
 
         // add all lines until current goal
-        for (var l = goalLineStart; l <= j; l++) {
+        for (let l = goalLineStart; l <= j; l++) {
           lineSet.push(lines[l]);
           goalLineStart = j + 1;
         }
@@ -185,7 +203,7 @@ export class InterpretedScenario {
     lineSet: PlanLine[],
     goalBind: Binding[]
   ): void {
-    var referenceScenario = interpreter.interpretations.find(
+    let referenceScenario = interpreter.interpretations.find(
       (k) => k.id.name === view.view!.name
     );
 
@@ -197,7 +215,7 @@ export class InterpretedScenario {
     // "view" is what we are calling with
     // "referenceScenario" is what we are calling
 
-    var bindings: Binding[] = [];
+    let bindings: Binding[] = [];
 
     for (let i = 0; i < referenceScenario.id.parameters.length; i++) {
       let name = referenceScenario.id.parameters[i];

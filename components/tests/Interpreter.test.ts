@@ -40,16 +40,16 @@ it("loads interpretation from json", function () {
 
   // check more complex structure
 
-  var i3 = planInterpreter.interpretations[3];
+  let i3 = planInterpreter.interpretations[3];
   expect(i3.views).toHaveLength(1);
 
-  var view = i3.views[0];
+  let view = i3.views[0];
   expect(view.start[0].name).toBe("load-truck");
   expect(view.goals![0].name).toBe("unload-truck");
   expect(view.goalStrategy.type).toBe(GoalStrategy.Final);
   expect(view.view!.name).toBe("package-delivery-from-to");
 
-  // var i5 = planInterpreter.interpretations[5];
+  // let i5 = planInterpreter.interpretations[5];
   // expect(i5.views).toHaveLength(1);
 
   // view = i5.views[0];
@@ -78,12 +78,12 @@ it("loads test", function () {
 });
 
 it("loads interpretation", function () {
-  var definition = loadFile("plan.txt");
-  var plan = new PlanSource(definition);
+  let definition = loadFile("plan.txt");
+  let plan = new PlanSource(definition);
   definition = loadFile("interpretation.json");
-  var planInterpreter = new PlanInterpreter(JSON.parse(definition));
+  let planInterpreter = new PlanInterpreter(JSON.parse(definition));
 
-  var ip = planInterpreter.interpret(plan);
+  let ip = planInterpreter.interpret(plan);
 
   expect(ip).toHaveLength(1);
 

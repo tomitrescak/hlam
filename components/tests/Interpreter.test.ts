@@ -12,18 +12,21 @@ function loadFile(sourcePath: string) {
 }
 
 it("loads interpretation from json", function () {
-  let definition = JSON.parse(loadFile("interpretation_full.json"));
+  let definition = JSON.parse(loadFile("interpretation.json"));
 
   let planInterpreter = new PlanInterpreter(definition);
 
-  expect(planInterpreter.interpretations.length).toBe(6);
+  expect(planInterpreter.interpretations.length).toBe(4);
 
   // check individual items
   let i1 = planInterpreter.interpretations[0];
-  expect(i1.id).toBe("truck-transport-from-to");
-  expect(i1.parameters).toHaveLength(4);
-  expect(i1.parameters).toEqual(["packageId", "truckId", "from", "to"]);
-  expect(i1.description).toBe("Truck delivery from !from to !to");
+
+  console.log(i1.id);
+
+  expect(i1.id.name).toBe("truck-transport-from-to");
+  expect(i1.id.parameters).toHaveLength(4);
+  expect(i1.id.parameters).toEqual(["packageId", "truckId", "from", "to"]);
+  expect(i1.description).toBe("Truck '!truckId' delivery from !from to !to");
 
   expect(i1.plan!.items).toHaveLength(3);
   expect(i1.plan!.type).toBe(ItemStructure.Sequence);
@@ -43,15 +46,15 @@ it("loads interpretation from json", function () {
   var view = i3.views[0];
   expect(view.start[0].name).toBe("load-truck");
   expect(view.goals![0].name).toBe("unload-truck");
-  expect(view.goalStrategy).toBe(GoalStrategy.Final);
+  expect(view.goalStrategy.type).toBe(GoalStrategy.Final);
   expect(view.view!.name).toBe("package-delivery-from-to");
 
-  var i5 = planInterpreter.interpretations[5];
-  expect(i5.views).toHaveLength(1);
+  // var i5 = planInterpreter.interpretations[5];
+  // expect(i5.views).toHaveLength(1);
 
-  view = i5.views[0];
-  expect(view.start).toHaveLength(4);
-  expect(view.start[0].name).toBe("load-airplane");
+  // view = i5.views[0];
+  // expect(view.start).toHaveLength(4);
+  // expect(view.start[0].name).toBe("load-airplane");
 });
 
 it("loads test", function () {
@@ -91,12 +94,12 @@ it("loads interpretation", function () {
   let first = ip[0].scenarios[0];
 
   expect(first.scenarios).toHaveLength(2);
-  expect(first.scenarios[0].text).toBe("Truck delivery from b1 to ab");
+  expect(first.scenarios[0].text).toBe("Truck 'trub' delivery from b1 to ab");
   expect(first.scenarios[0].lines).toHaveLength(4);
   expect(first.scenarios[0].lines[0].text).toBe("load-truck obj1 trub b1");
   expect(first.scenarios[0].lines[1].text).toBe("drive-truck trub b1 b2 b");
   expect(first.scenarios[0].lines[2].text).toBe("drive-truck trub b2 ab b");
   expect(first.scenarios[0].lines[3].text).toBe("unload-truck obj1 trub ab");
 
-  expect(first.scenarios[1].text).toBe("Plane delivery from ab to ad");
+  expect(first.scenarios[1].text).toBe("Plane 'a380' delivery from ab to ad");
 });

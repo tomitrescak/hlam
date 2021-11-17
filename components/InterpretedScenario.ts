@@ -186,14 +186,28 @@ export class InterpretedScenario {
     goalBind: Binding[]
   ): void {
     var referenceScenario = interpreter.interpretations.find(
-      (k) => k.id === view.view!.name
+      (k) => k.id.name === view.view!.name
     );
 
     if (referenceScenario == null) {
       throw new Error("View does not exist: " + view.view!.name);
     }
+
+    // we need to remap the variables according to bindings
+    // "view" is what we are calling with
+    // "referenceScenario" is what we are calling
+
+    var bindings: Binding[] = [];
+
+    for (let i = 0; i < referenceScenario.id.parameters.length; i++) {
+      let name = referenceScenario.id.parameters[i];
+      let parameter = view.view!.parameters[i];
+      let value = goalBind.find((g) => g.variable === parameter)?.value;
+      bindings.push(new Binding(name, value || ""));
+    }
+
     this.scenarios.push(
-      new InterpretedScenario(interpreter, lineSet, referenceScenario, goalBind)
+      new InterpretedScenario(interpreter, lineSet, referenceScenario, bindings)
     );
   }
 

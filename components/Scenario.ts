@@ -1,4 +1,5 @@
 import { Item, ItemDAO } from "./Item";
+import { PlanAction } from "./PlanAction";
 import { View, ViewDAO } from "./View";
 
 export type ScenarioDAO = {
@@ -9,13 +10,13 @@ export type ScenarioDAO = {
 };
 
 export class Scenario {
-  public id: string;
+  public id: PlanAction;
   public description: string;
   public views: View[];
   public plan: Item | null;
 
   public constructor(definition: ScenarioDAO) {
-    this.id = definition.id;
+    this.id = new PlanAction(definition.id);
     this.description = definition.description ? definition.description : "";
     this.plan = definition.plan ? new Item(definition.plan) : null;
     this.views = definition.views

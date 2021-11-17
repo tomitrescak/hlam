@@ -1,29 +1,29 @@
 {
   "views": [
     {
-      "id": "truck-transport-from-to",
-      "description": "Truck delivery from !truckFrom to !truckTo",
+      "id": "truck-transport-from-to !packageId !truckId !from !to",
+      "description": "Truck '!truckId' delivery from !from to !to",
       "plan": {
         "sequence": [
-          "load-truck !packageId !truckId !truckFrom",
+          "load-truck !packageId !truckId !from",
           "drive-truck !truckId from to city",
-          "unload-truck !packageId !truckId !truckTo"
+          "unload-truck !packageId !truckId !to"
         ]
       }
     },
     {
-      "id": "plane-transport-from-to",
-      "description": "Plane delivery from !planeFrom to !planeTo",
+      "id": "plane-transport-from-to !packageId !planeId !from !to",
+      "description": "Plane '!planeId' delivery from !from to !to",
       "plan": {
         "sequence": [
-          "load-airplane !packageId !planeId !planeFrom",
-          "fly-airplane !planeId planeFrom planeTo",
-          "unload-airplane !packageId !planeId !planeTo"
+          "load-airplane !packageId !planeId !from",
+          "fly-airplane !planeId from to",
+          "unload-airplane !packageId !planeId !to"
         ]
       }
     },
     {
-      "id": "package-delivery-from-to",
+      "id": "package-delivery-from-to !packageId !from !to",
       "description": "Package delivery '!packageId' from '!from' to '!to'",
       "views": [
         {
@@ -31,14 +31,14 @@
           "start": "load-truck !packageId ?truckId ?truckFrom",
           "goal": "unload-truck !packageId ?truckId ?truckTo",
           "goalStrategy": { "type": "first" },
-          "view": "truck-transport-from-to !packageId ?truckId ?truckFrom ?truckTo"
+          "view": "truck-transport-from-to !packageId !truckId !truckFrom !truckTo"
         },
         {
           "bind": ["planeId"],
           "start": "load-airplane !packageId ?planeId ?planeFrom",
           "goal": "unload-airplane !packageId ?planeId ?planeTo",
           "goalStrategy": { "type": "first" },
-          "view": "plane-transport-from-to !packageId ?planeId ?planeFrom !planeTo"
+          "view": "plane-transport-from-to !packageId !planeId !planeFrom !planeTo"
         }
       ]
     },
@@ -59,7 +59,7 @@
             "type": "final",
             "filter": ["packageId"]
           },
-          "view": "package-delivery-from-to ?packageId ?from ?to"
+          "view": "package-delivery-from-to !packageId !from !to"
         }
       ]
     }

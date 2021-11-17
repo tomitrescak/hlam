@@ -1,13 +1,8 @@
 {
   "views": [
     {
-      "id": "truck-transport-from-to",
-      "parameters": [
-        "packageId",
-        "truckId",
-        "from",
-        "to"
-      ],
+      "id": "truck-transport-from-to !packageId !truckId !from !to",
+      "parameters": ["packageId", "truckId", "from", "to"],
       "description": "Truck delivery from !from to !to",
       "plan": {
         "sequence": [
@@ -20,12 +15,7 @@
     {
       "id": "plane-transport-from-to",
       "description": "Plane delivery from !from to !to",
-      "parameters": [
-        "packageId",
-        "from",
-        "to",
-        "planeId"
-      ],
+      "parameters": ["packageId", "from", "to", "planeId"],
       "plan": {
         "sequence": [
           "load-airplane !packageId !planeId !from",
@@ -36,11 +26,7 @@
     },
     {
       "id": "package-delivery-from-to",
-      "parameters": [
-        "packageId",
-        "from",
-        "to"
-      ],
+      "parameters": ["packageId", "from", "to"],
       "description": "Package delivery '!packageId' from '!from' to '!to'",
       "views": [
         {
@@ -80,9 +66,7 @@
     },
     {
       "id": "airport-plane-truck-traffic",
-      "parameters": [
-        "airportId"
-      ],
+      "parameters": ["airportId"],
       "plan": {
         "anyOf": [
           "load-airplane packageId planeId !airportId",
@@ -111,4 +95,3 @@
     }
   ]
 }
-

@@ -113,9 +113,9 @@ const HomeContent: NextPage = () => {
             display: "flex",
           }}
         >
-          <div className="logo">
+          {/* <div className="logo">
             <Image src="/wsu.png" width={150} height={63} alt="WSU Logo" />
-          </div>
+          </div> */}
           <h1 style={{ color: "#efefef" }}>
             Hierarchic Language Abstraction Model Processor 1.0.1
           </h1>

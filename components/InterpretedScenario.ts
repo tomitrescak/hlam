@@ -1,5 +1,4 @@
 import { Binding } from "./Binding";
-import { GoalStrategy } from "./Enums";
 import { PlanInterpreter } from "./PlanInterpreter";
 import { PlanLine } from "./PlanLine";
 import { Scenario } from "./Scenario";
@@ -115,7 +114,7 @@ export class InterpretedScenario {
             }
 
             // we mark this as finished so no more processing is done on this view
-            if (view.goalStrategy.type === GoalStrategy.Final) {
+            if (view.goalStrategy === "final") {
               view.finishedBindings.push(startBind);
             }
           }
@@ -189,7 +188,7 @@ export class InterpretedScenario {
           goalLineStart = j + 1;
         }
 
-        if (view.goalStrategy.type === GoalStrategy.First) {
+        if (view.goalStrategy === "first") {
           break;
         }
       }

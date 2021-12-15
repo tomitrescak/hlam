@@ -5,7 +5,7 @@ export const data = [
   {
     id: "l",
     name: "Logistics",
-    interpretation: JSON.stringify(logistics),
+    interpretation: JSON.stringify(logistics, null, 4),
     domain: `;; logistics domain Typed version.
 ;;
 
@@ -137,14 +137,16 @@ export const data = [
 08: (    drive-truck truc c1 ac c) [1.00]
 09: (   unload-truck obj3 truc ac) [1.00]
 10: (   unload-truck obj1 trub ab) [1.00]
-11: (  load-airplane obj1 a380 ab) [1.00]
-12: (     fly-airplane a380 ab ac) [650.00]
-13: (  load-airplane obj3 a380 ac) [1.00]
-14: (     fly-airplane a380 ac ad) [100.00]
-15: (unload-airplane obj1 a380 ad) [1.00]
-16: (     fly-airplane a380 ad aa) [500.00]
-17: (unload-airplane obj2 a380 aa) [1.00]
-18: (unload-airplane obj3 a380 aa) [1.00]`,
+11: (  load-airplane obj3 a381 ac) [1.00]
+12: (     fly-airplane a381 ac ad) [100.00]
+13: (unload-airplane obj3 a381 ad) [1.00]
+14: (  load-airplane obj1 a380 ab) [1.00]
+15: (     fly-airplane a380 ab ad) [450.00]
+16: (  load-airplane obj3 a380 ad) [1.00]
+17: (unload-airplane obj1 a380 ad) [1.00]
+18: (     fly-airplane a380 ad aa) [500.00]
+19: (unload-airplane obj2 a380 aa) [1.00]
+20: (unload-airplane obj3 a380 aa) [1.00]`,
       },
       {
         problem: `(define (problem logistics-6-0)
@@ -233,7 +235,7 @@ export const data = [
   {
     id: "d",
     name: "Depots",
-    interpretation: JSON.stringify(depot),
+    interpretation: JSON.stringify(depot, null, 4),
     domain: `(define (domain Depot)
 (:requirements :typing)
 (:types place locatable - object
@@ -325,6 +327,82 @@ export const data = [
 08: (        drive truck1 depot0 distributor0) [1.00]
 09: (unload hoist1 crate1 truck1 distributor0) [1.00]
 10: ( drop hoist1 crate1 pallet1 distributor0) [1.00]`,
+      },
+      {
+        problem: `(define (problem depotprob1234) (:domain Depot)
+(:objects
+  depot0 - Depot
+  distributor0 distributor1 - Distributor
+  truck0 truck1 - Truck
+  pallet0 pallet1 pallet2 pallet3 pallet4 pallet5 - Pallet
+  crate0 crate1 crate2 crate3 crate4 crate5 - Crate
+  hoist0 hoist1 hoist2 - Hoist)
+(:init
+  (at pallet0 depot0)
+  (clear crate5)
+  (at pallet1 distributor0)
+  (clear pallet1)
+  (at pallet2 distributor1)
+  (clear crate3)
+  (at pallet3 distributor0)
+  (clear pallet3)
+  (at pallet4 distributor0)
+  (clear crate4)
+  (at pallet5 distributor1)
+  (clear crate1)
+  (at truck0 distributor1)
+  (at truck1 depot0)
+  (at hoist0 depot0)
+  (available hoist0)
+  (at hoist1 distributor0)
+  (available hoist1)
+  (at hoist2 distributor1)
+  (available hoist2)
+  (at crate0 distributor0)
+  (on crate0 pallet4)
+  (at crate1 distributor1)
+  (on crate1 pallet5)
+  (at crate2 distributor1)
+  (on crate2 pallet2)
+  (at crate3 distributor1)
+  (on crate3 crate2)
+  (at crate4 distributor0)
+  (on crate4 crate0)
+  (at crate5 depot0)
+  (on crate5 pallet0)
+)
+
+(:goal (and
+    (on crate0 pallet3)
+    (on crate1 crate4)
+    (on crate3 pallet1)
+    (on crate4 pallet5)
+    (on crate5 crate1)
+  )
+))
+`,
+        result: `00: (  lift hoist1 crate4 crate0 distributor0) [1.00]
+01: (  drive truck0 distributor1 distributor0) [1.00]
+02: ( lift hoist2 crate1 pallet5 distributor1) [1.00]
+03: (  load hoist1 crate4 truck0 distributor0) [1.00]
+04: (       lift hoist0 crate5 pallet0 depot0) [1.00]
+05: (  drop hoist2 crate1 crate3 distributor1) [1.00]
+06: (  drive truck0 distributor0 distributor1) [1.00]
+07: ( lift hoist1 crate0 pallet4 distributor0) [1.00]
+08: (unload hoist2 crate4 truck0 distributor1) [1.00]
+09: ( drop hoist2 crate4 pallet5 distributor1) [1.00]
+10: ( drop hoist1 crate0 pallet3 distributor0) [1.00]
+11: (        load hoist0 crate5 truck1 depot0) [1.00]
+12: (        drive truck1 depot0 distributor1) [1.00]
+13: (  lift hoist2 crate1 crate3 distributor1) [1.00]
+14: (  drop hoist2 crate1 crate4 distributor1) [1.00]
+15: (unload hoist2 crate5 truck1 distributor1) [1.00]
+16: (  drop hoist2 crate5 crate1 distributor1) [1.00]
+17: (  lift hoist2 crate3 crate2 distributor1) [1.00]
+18: (  load hoist2 crate3 truck1 distributor1) [1.00]
+19: (  drive truck1 distributor1 distributor0) [1.00]
+20: (unload hoist1 crate3 truck1 distributor0) [1.00]
+21: ( drop hoist1 crate3 pallet1 distributor0) [1.00]`,
       },
     ],
   },

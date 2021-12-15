@@ -35,10 +35,13 @@ const Home: NextPage = () => {
 const HomeContent: NextPage = () => {
   const [domain, setDomain] = React.useState(0);
   const [plan, setPlan] = React.useState(0);
-
   const [interpretation, setInterpretation] = React.useState<
     InterpretedScenario[] | null
   >(null);
+  const [interpretationSource, setInterpretationSource] = React.useState<
+    string | null | undefined
+  >(null);
+
   const [error, setError] = React.useState("Processing ...");
 
   React.useEffect(() => {
@@ -58,6 +61,10 @@ const HomeContent: NextPage = () => {
       );
 
       let newInt = i.interpret(p);
+
+      if (interpretation && interpretationSource != interpretation) {
+        setInterpretationSource(interpretation || "");
+      }
       setInterpretation(newInt);
       setError("");
     } catch (ex) {
@@ -86,11 +93,11 @@ const HomeContent: NextPage = () => {
   }
 
   function show(what: string) {
-    document.querySelector("#domain")!.style.display = "none";
-    document.querySelector("#problem")!.style.display = "none";
-    document.querySelector("#plan")!.style.display = "none";
+    document.querySelector<HTMLDivElement>("#domain")!.style.display = "none";
+    document.querySelector<HTMLDivElement>("#problem")!.style.display = "none";
+    document.querySelector<HTMLDivElement>("#plan")!.style.display = "none";
 
-    document.querySelector(`#${what}`)!.style.display = "";
+    document.querySelector<HTMLDivElement>(`#${what}`)!.style.display = "";
   }
 
   return (
@@ -122,19 +129,20 @@ const HomeContent: NextPage = () => {
           <SplitPane split="vertical" minSize={50}>
             <div className="editor">
               <div className="editorHeader">
-                <span style={{ flex: 1 }}>
+                <div style={{ flex: 1, display: "flex" }}>
                   <a href="#" onClick={() => show("domain")}>
                     Domain
-                  </a>{" "}
-                  &gt;{" "}
+                  </a>
+                  <div className="headerSeparator"></div>
                   <a href="#" onClick={() => show("problem")}>
                     Problem
-                  </a>{" "}
-                  &gt;{" "}
+                  </a>
+                  <div className="headerSeparator"></div>
                   <a href="#" onClick={() => show("plan")}>
                     Plan
                   </a>
-                </span>
+                  <div className="headerSeparator"></div>
+                </div>
                 <span style={{ fontSize: "smaller" }}>Preload →</span>
                 <select
                   value={`${domain}-${plan}`}
@@ -205,12 +213,9 @@ const HomeContent: NextPage = () => {
               <div className="editorHeader">Interpretation</div>
               <Editor
                 className="editor"
+                path={`plan-${domain}.json`}
                 onChange={debounce(handleInterpretationChange)}
-                defaultValue={JSON.stringify(
-                  JSON.parse(data[domain].interpretation),
-                  null,
-                  4
-                )}
+                defaultValue={data[domain].interpretation}
                 defaultLanguage="json"
                 theme="vs-dark"
               />
@@ -253,7 +258,7 @@ export const Scenario = ({
         <div style={{ width: 20 }}>{expanded ? "-" : "+"}</div>
         {int.text}
       </div>
-      {expanded && (int.scenarios.length || int.lines.length) && (
+      {expanded && (int.scenarios.length || int.lines.length) ? (
         <div className="iContent">
           {int.scenarios
             ? int.scenarios.map((sc, sci) => (
@@ -274,6 +279,18 @@ export const Scenario = ({
                 </div>
               ))
             : null}
+        </div>
+      ) : (
+        <div
+          style={{
+            marginBottom: 4,
+            marginLeft: 20,
+            background: "#feb255",
+            color: "#333",
+            padding: 2,
+          }}
+        >
+          This abstraction has no matching lines
         </div>
       )}
     </div>

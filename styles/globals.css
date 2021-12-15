@@ -87,6 +87,13 @@ a {
   overflow: auto;
 }
 
+.headerSeparator {
+  margin: -4px 8px -4px 8px;
+  background-color: #000;
+  width: 2px;
+  height: 30px;
+}
+
 .editorHeader {
   position: absolute;
   height: 30px;

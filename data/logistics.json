@@ -27,21 +27,15 @@
       "description": "Package delivery '!packageId' from '!from' to '!to'",
       "views": [
         {
-          "bind": ["truckId"],
           "start": "load-truck !packageId ?truckId ?truckFrom",
           "goal": "unload-truck !packageId ?truckId ?truckTo",
-          "goalStrategy": {
-            "type": "first"
-          },
+          "goalStrategy": "first",
           "view": "TruckTrip !packageId !truckId !truckFrom !truckTo"
         },
         {
-          "bind": ["planeId"],
           "start": "load-airplane !packageId ?planeId ?planeFrom",
           "goal": "unload-airplane !packageId ?planeId ?planeTo",
-          "goalStrategy": {
-            "type": "first"
-          },
+          "goalStrategy": "first",
           "view": "PlaneTrip !packageId !planeId !planeFrom !planeTo"
         }
       ]
@@ -59,9 +53,7 @@
             "unload-truck !packageId truckId ?to",
             "unload-airplane !packageId planeId ?to"
           ],
-          "goalStrategy": {
-            "type": "final"
-          },
+          "goalStrategy": "final",
           "view": "PackageTrip !packageId !from !to"
         }
       ]

@@ -1,62 +1,37 @@
 {
   "views": [
     {
-      "id": "TruckTrip !packageId !truckId !from !to",
+      "id": "TruckTrip !crateId !truckId !from !to",
       "description": "Truck '!truckId' delivery from !from to !to",
       "plan": {
         "sequence": [
-          "load-truck !packageId !truckId !from",
-          "drive-truck !truckId from to city",
-          "unload-truck !packageId !truckId !to"
+          "load hoist !crateId !truckId !from",
+          "drive !truckId from to",
+          "unload hoist !crateId !truckId !to"
         ]
       }
     },
     {
-      "id": "PlaneTrip !packageId !planeId !from !to",
-      "description": "Plane '!planeId' delivery from !from to !to",
-      "plan": {
-        "sequence": [
-          "load-airplane !packageId !planeId !from",
-          "fly-airplane !planeId from to",
-          "unload-airplane !packageId !planeId !to"
-        ]
-      }
-    },
-    {
-      "id": "PackageTrip !packageId !from !to",
-      "description": "Package delivery '!packageId' from '!from' to '!to'",
+      "id": "ManageCrate !crateId !from !to",
+      "description": "Crate delivery '!crateId' from '!from' to '!to'",
       "views": [
         {
-          "bind": ["truckId"],
-          "start": "load-truck !packageId ?truckId ?truckFrom",
-          "goal": "unload-truck !packageId ?truckId ?truckTo",
-          "goalStrategy": {
-            "type": "first"
-          },
-          "view": "TruckTrip !packageId !truckId !truckFrom !truckTo"
-        },
-        {
-          "bind": ["planeId"],
-          "start": "load-airplane !packageId ?planeId ?planeFrom",
-          "goal": "unload-airplane !packageId ?planeId ?planeTo",
-          "goalStrategy": {
-            "type": "first"
-          },
-          "view": "PlaneTrip !packageId !planeId !planeFrom !planeTo"
+          "start": "load hoist !crateId ?truckId ?placeFrom",
+          "goal": "unload hoist !crateId !truckId ?placeTo",
+          "goalStrategy": "first",
+          "view": "TruckTrip !crateId !truckId !placeFrom !placeTo"
         }
       ]
     },
     {
       "id": "CrateDelivery",
-      "description": "Package Tracking",
+      "description": "Crate Truck Deliveries",
       "views": [
         {
-          "start": "lift hoist ?crate pallet distributor",
-          "goal": "drop hoist ?crate pallet distributor",
-          "goalStrategy": {
-            "type": "final"
-          },
-          "view": "ManageCrate !packageId !from !to"
+          "start": "lift hoist ?crateId pallet ?from",
+          "goal": "drop hoist !crateId pallet ?to",
+          "goalStrategy": "final",
+          "view": "ManageCrate !crateId !from !to"
         }
       ]
     }

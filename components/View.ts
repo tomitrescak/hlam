@@ -1,29 +1,20 @@
 import { Binding } from "./Binding";
-import { GoalStrategy } from "./Enums";
 import { PlanAction } from "./PlanAction";
 
-type StrategyDAO = {
-  type: "final" | "first";
-  filter: string[] | undefined;
-};
+type GoalStrategy = "first" | "final";
 
 export type ViewDAO = {
   start: string[];
   goal: string[];
-  goalStrategy: StrategyDAO;
+  goalStrategy: GoalStrategy;
   view: string | null;
   // boundVariables: string[];
-};
-
-type Strategy = {
-  type: GoalStrategy;
-  filter?: string[] | undefined;
 };
 
 export class View {
   public start: PlanAction[];
   public goals: PlanAction[] | null;
-  public goalStrategy: Strategy;
+  public goalStrategy: GoalStrategy;
   public view: PlanAction | null;
   // public boundVariables: string[];
 
@@ -51,17 +42,9 @@ export class View {
     this.view = definition.view ? new PlanAction(definition.view) : null;
 
     if (definition.goalStrategy) {
-      this.goalStrategy = {
-        type:
-          definition.goalStrategy.type === "final"
-            ? GoalStrategy.Final
-            : GoalStrategy.First,
-        filter: definition.goalStrategy.filter,
-      };
+      this.goalStrategy = definition.goalStrategy;
     } else {
-      this.goalStrategy = {
-        type: GoalStrategy.First,
-      };
+      this.goalStrategy = "first";
     }
 
     // this.boundVariables = definition.bind
@@ -74,11 +57,12 @@ export class View {
       this.finishedBindings.length > 0 &&
       this.finishedBindings.some((b) => {
         // filter bindings
-        let myFilteredBindings = this.goalStrategy.filter
-          ? b.filter(
-              (bi) => this.goalStrategy.filter!.indexOf(bi.variable) >= 0
-            )
-          : b;
+
+        let boundVariables = this.goals!.flatMap((g) => g.bound);
+        let myFilteredBindings =
+          boundVariables.length > 0
+            ? b.filter((bi) => boundVariables.indexOf(bi.variable) >= 0)
+            : b;
 
         return myFilteredBindings.every((bi) => {
           let myValue = bi.value;

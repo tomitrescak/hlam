@@ -1,7 +1,7 @@
 import expect from "expect";
 import fs from "fs";
 import path from "path";
-import { GoalStrategy, ItemStructure } from "../Enums";
+import { ItemStructure } from "../Enums";
 import { PlanInterpreter } from "../PlanInterpreter";
 import { PlanSource } from "../PlanSource";
 
@@ -46,7 +46,7 @@ it("loads interpretation from json", function () {
   let view = i3.views[0];
   expect(view.start[0].name).toBe("load-truck");
   expect(view.goals![0].name).toBe("unload-truck");
-  expect(view.goalStrategy.type).toBe(GoalStrategy.Final);
+  expect(view.goalStrategy).toBe("final");
   expect(view.view!.name).toBe("package-delivery-from-to");
 
   // let i5 = planInterpreter.interpretations[5];

@@ -47,22 +47,16 @@
       ]
     },
     {
-      "id": "PackageDelivery",
+      "id": "CrateDelivery",
       "description": "Package Tracking",
       "views": [
         {
-          "start": [
-            "load-truck ?packageId truckId ?from",
-            "load-airplane ?packageId planeId ?from"
-          ],
-          "goal": [
-            "unload-truck !packageId truckId ?to",
-            "unload-airplane !packageId planeId ?to"
-          ],
+          "start": "lift hoist ?crate pallet distributor",
+          "goal": "drop hoist ?crate pallet distributor",
           "goalStrategy": {
             "type": "final"
           },
-          "view": "PackageTrip !packageId !from !to"
+          "view": "ManageCrate !packageId !from !to"
         }
       ]
     }

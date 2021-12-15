@@ -19,24 +19,6 @@ function debounce(func: any, timeout = 500) {
   };
 }
 
-const files = {
-  "script.js": {
-    name: "script.js",
-    language: "javascript",
-    value: "//",
-  },
-  "style.css": {
-    name: "style.css",
-    language: "css",
-    value: ".a { }",
-  },
-  "index.html": {
-    name: "index.html",
-    language: "html",
-    value: "<div></div>",
-  },
-};
-
 const Home: NextPage = () => {
   return (
     <>
@@ -70,7 +52,7 @@ const HomeContent: NextPage = () => {
     try {
       setError("Processing ...");
 
-      let p = new PlanSource(planSource || data[domain].plans[plan]);
+      let p = new PlanSource(planSource || data[domain].plans[plan].result);
       let i = new PlanInterpreter(
         JSON.parse(interpretation || data[domain].interpretation)
       );
@@ -103,6 +85,14 @@ const HomeContent: NextPage = () => {
     }
   }
 
+  function show(what: string) {
+    document.querySelector("#domain")!.style.display = "none";
+    document.querySelector("#problem")!.style.display = "none";
+    document.querySelector("#plan")!.style.display = "none";
+
+    document.querySelector(`#${what}`)!.style.display = "";
+  }
+
   return (
     <>
       <main>
@@ -132,7 +122,19 @@ const HomeContent: NextPage = () => {
           <SplitPane split="vertical" minSize={50}>
             <div className="editor">
               <div className="editorHeader">
-                <span style={{ flex: 1 }}>Plan</span>
+                <span style={{ flex: 1 }}>
+                  <a href="#" onClick={() => show("domain")}>
+                    Domain
+                  </a>{" "}
+                  &gt;{" "}
+                  <a href="#" onClick={() => show("problem")}>
+                    Problem
+                  </a>{" "}
+                  &gt;{" "}
+                  <a href="#" onClick={() => show("plan")}>
+                    Plan
+                  </a>
+                </span>
                 <span style={{ fontSize: "smaller" }}>Preload →</span>
                 <select
                   value={`${domain}-${plan}`}
@@ -143,7 +145,7 @@ const HomeContent: NextPage = () => {
                     let plan = parseInt(values[1]);
                     setPlan(plan);
                     setResult(
-                      data[domain].plans[plan],
+                      data[domain].plans[plan].result,
                       data[domain].interpretation
                     );
                   }}
@@ -151,24 +153,53 @@ const HomeContent: NextPage = () => {
                   {data.flatMap((d, j) =>
                     d.plans.map((p, i) => (
                       <option key={`${d.id}-${i}`} value={`${j}-${i}`}>
-                        Logistics {i.toString().padStart(2, "0")}
+                        {d.name} {i.toString().padStart(2, "0")}
                       </option>
                     ))
                   )}
                 </select>
               </div>
-              <Editor
-                defaultLanguage="text"
-                path={`plan-${domain}-${plan}.txt`}
-                defaultValue={data[domain].plans[plan]}
-                onChange={debounce(handlePlanChange)}
-                theme="vs-dark"
-                options={{
-                  minimap: {
-                    enabled: false,
-                  },
+              <div
+                style={{
+                  display: "none",
+                  padding: 16,
+                  marginTop: 30,
+                  height: "100%",
+                  overflow: "auto",
                 }}
-              />
+                id="domain"
+              >
+                <pre>{data[domain].domain}</pre>
+              </div>
+              <div
+                style={{
+                  display: "none",
+                  padding: 16,
+                  marginTop: 30,
+                  height: "100%",
+                  overflow: "auto",
+                }}
+                id="problem"
+              >
+                <pre>{data[domain].plans[plan].problem}</pre>
+              </div>
+              <div
+                id="plan"
+                style={{ width: "100%", height: "100%", marginTop: 40 }}
+              >
+                <Editor
+                  defaultLanguage="text"
+                  path={`plan-${domain}-${plan}.txt`}
+                  defaultValue={data[domain].plans[plan].result}
+                  onChange={debounce(handlePlanChange)}
+                  theme="vs-dark"
+                  options={{
+                    minimap: {
+                      enabled: false,
+                    },
+                  }}
+                />
+              </div>
             </div>
             <div className="editor">
               <div className="editorHeader">Interpretation</div>

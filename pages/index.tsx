@@ -114,7 +114,7 @@ const HomeContent: NextPage = () => {
             <Image src="/wsu.png" width={150} height={63} alt="WSU Logo" />
           </div> */}
           <h1 style={{ color: "#efefef" }}>
-            Hierarchic Language Abstraction Model Processor 1.0.1
+            Hierarchic Language Abstraction Model Processor 1.0.2
           </h1>
         </div>
         <div
